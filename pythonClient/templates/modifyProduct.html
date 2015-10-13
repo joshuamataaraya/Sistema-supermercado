@@ -1,0 +1,49 @@
+<!DOCTYPE html> {% extends "layout.html" %} {% block content %}
+<form class="form-horizontal" method="post" role="form" autocomplete="off">
+
+  <h2>Modify an Participant</h2>
+  <br>
+
+  <div class="form-group">
+    <label for="comment"> Select an Participant</label>
+    <select class="form-control" name="participantSelect">
+      <option>----</option>
+      {% for category in productToEdit %}
+        <option>{{ category }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Participant First Name</label>
+    <input type="text" class="form-control" name="FirstName">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Participant Last Name</label>
+    <input type="text" class="form-control" name="participantLastName">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Participant Email</label>
+    <input type="text" class="form-control" name="participantEmail">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Participant's Address</label>
+    <textarea type="text" class="form-control" name="participantAddress"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Telephone(s)</label>
+    <input type="phone" class="form-control" name="telCel" placeholder="Mobile">
+    <input type="phone" class="form-control" name="telWork" placeholder="Work">
+    <input type="phone" class="form-control" name="telHome" placeholder="Home">
+    <input type="phone" class="form-control" name="telOther" placeholder="Other">
+  </div>
+
+  <br>
+  <button class="btn btn-lg btn-primary" type="submit">Modify Participant</button>
+
+</form>
+{% endblock %}

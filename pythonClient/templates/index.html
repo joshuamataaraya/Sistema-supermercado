@@ -1,0 +1,54 @@
+<!DOCTYPE html> {% extends "layout.html" %} {% block content %}
+<br>
+
+<form class="form-horizontal" role="form" autocomplete="off" method="post">
+
+  <h2>Products</h2>
+  <br>
+  <br>
+
+  <br><br>
+  <div class="container">
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>Imagen</th>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Descripcion</th>
+        <th>Cantidad</th>
+        <th>Costo</th>
+        <th>Precio Final</th>
+        <th>Descuento Maximo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr>
+          <td><img src="data:;base64,{{ product['Foto'] }}"></td>
+          <td>{{ (product['Nombre']) }}</td>
+          <td>{{ product['Marca'] }}</td>
+          <td>{{ product['Descripcion'] }}</td>
+          <td>{{ product['Cantidad'] }}</td>
+          <td>{{ product['Costo'] }}</td>
+          <td>{{ product['PrecioFinal'] }}</td>
+          <td>{{ product['DescuentoMaximo'] }}</td>
+
+            <form method="post" class="form-inline">
+            <input hidden value="{{ product['Id'] }}" name="idProduct">
+            <td><button class="btn" type="submit">
+              Editar
+            </button></td>
+            </form>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+</form>
+{% endblock %}
