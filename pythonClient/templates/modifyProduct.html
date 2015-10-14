@@ -1,49 +1,55 @@
 <!DOCTYPE html> {% extends "layout.html" %} {% block content %}
-<form class="form-horizontal" method="post" role="form" autocomplete="off">
+<form class="form-horizontal" method="POST" role="form" autocomplete="off" enctype="multipart/form-data">
 
-  <h2>Modify an Participant</h2>
+  <h2>Modify a Product</h2>
   <br>
 
+  <img src="data:;base64,{{ product['Foto'] }}">
+  <p></p>
+  Actualice la imagen: <input type="file" name="file">
+
   <div class="form-group">
-    <label for="comment"> Select an Participant</label>
-    <select class="form-control" name="participantSelect">
-      <option>----</option>
-      {% for category in productToEdit %}
-        <option>{{ category }}</option>
-      {% endfor %}
-    </select>
+    <label for="usr">Nombre</label>
+    <input type="text" class="form-control" name="Nombre" placeholder={{product['Nombre']}}>
+  </div>
+
+
+  <div class="form-group">
+    <label for="usr">Marca</label>
+    <input type="text" class="form-control" name="Marca" placeholder={{product['Marca']}}>
   </div>
 
   <div class="form-group">
-    <label for="usr">Participant First Name</label>
-    <input type="text" class="form-control" name="FirstName">
+    <label for="usr">Descripcion</label>
+    <input type="text" class="form-control" name="Descripcion" placeholder={{product['Descripcion']}}>
   </div>
 
   <div class="form-group">
-    <label for="usr">Participant Last Name</label>
-    <input type="text" class="form-control" name="participantLastName">
+    <label for="usr">Cantidad</label>
+    <input type="text" class="form-control" name="Cantidad" placeholder={{product['Cantidad']}}>
   </div>
 
   <div class="form-group">
-    <label for="usr">Participant Email</label>
-    <input type="text" class="form-control" name="participantEmail">
+    <label for="usr">Costo</label>
+    <input type="text" class="form-control" name="Costo" placeholder={{product['Costo']}}>
   </div>
 
   <div class="form-group">
-    <label for="usr">Participant's Address</label>
-    <textarea type="text" class="form-control" name="participantAddress"></textarea>
+    <label for="usr">Precio Final</label>
+    <input type="text" class="form-control" name="Marca" placeholder={{product['PrecioFinal']}}>
   </div>
 
   <div class="form-group">
-    <label for="usr">Telephone(s)</label>
-    <input type="phone" class="form-control" name="telCel" placeholder="Mobile">
-    <input type="phone" class="form-control" name="telWork" placeholder="Work">
-    <input type="phone" class="form-control" name="telHome" placeholder="Home">
-    <input type="phone" class="form-control" name="telOther" placeholder="Other">
+    <label for="usr">Descuento Maximo</label>
+    <input type="text" class="form-control" name="DescuentoMaximo" placeholder={{product['DescuentoMaximo']}}>
   </div>
+
+
+
+
 
   <br>
-  <button class="btn btn-lg btn-primary" type="submit">Modify Participant</button>
+  <button class="btn btn-lg btn-primary" type="submit">Modify Product</button>
 
 </form>
 {% endblock %}

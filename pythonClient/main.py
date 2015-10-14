@@ -7,8 +7,8 @@ from flask_login import (LoginManager, login_user,
                         logout_user, login_required, current_user)
 from flask import Response
 from user import User
-from sql import SQLConnection
 from db import *
+from sql import SQLConnection
 import base64
 
 app = Flask(__name__)
@@ -33,11 +33,12 @@ def index():
         product['Foto'] = base64.b64encode(product['Foto'])
         DBproducts.append(product)
 
-    #if request.method == 'POST':
-    #    alias = request.values.get(idProduct)
-
-    #    return url_for('modifyProduct')
-
+    if request.method == 'POST':
+        try:
+            productId = request.values.get('idProduct')
+            return redirect(url_for('modifyProduct',id=productId))
+        except Exception as e:
+            return render_template('index.html', products=DBproducts)
     return render_template('index.html', products=DBproducts)
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -65,35 +66,51 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-@app.route("/modifyProduct", methods=['GET', 'POST'])
-@login_required
-def modifyProduct():
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
-    agents = dbGetParticipants(current_user.userType,current_user.userid,
-    2)
+def allowed_file(filename):
+  return '.' in filename and \
+    filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route("/modifyProduct/<id>", methods=['GET', 'POST'])
+@login_required
+def modifyProduct(id):
+    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    con = sqlCon.connect()
+
+    cursor = con.cursor(as_dict=True)
+    cursor.callproc('sp_obtenerProducto',(id,))
+
+
+
+    for product in cursor:
+        product['Foto'] = base64.b64encode(product['Foto'])
+        DBproduct = product
 
     if request.method == 'POST':
-        alias = request.form['participantSelect']
-        name = request.form['FirstName']
-        lastName = request.form['participantLastName']
-        email=request.form['participantEmail']
-        address=request.form['participantAddress']
+        upload_file = request.files["file"]
+        image_data = upload_file.read()
+        if file and allowed_file(upload_file.filename):
+            blobFile=db.Blob(image_data)
 
-        telCel=request.form['telCel']
-        telWork=request.form['telWork']
-        telHome=request.form['telHome']
-        telOther=request.form['telOther']
-        phones=[telCel,telWork,telHome,telOther]
+        nombre=request.form['Nombre'].encode("UTF-8")
+        marca=request.form['Marca'].encode("UTF-8")
+        descripcion=request.form['Descripcion'].encode("UTF-8")
+        cantidad=request.form['Cantidad'].encode("UTF-8")
+        costo=request.form['Costo'].encode("UTF-8")
+        precioFinal=request.form['PrecioFinal'].encode("UTF-8")
+        descuentoMaximo=request.form['DescuentoMaximo'].encode("UTF-8")
 
-        try:
-            dbModifyParticipant(current_user.userType,current_user.userid, alias, name, lastName,email,address)
+        sqlCon = SQLConnection(current_user.userType, current_user.userid)
+        con = sqlCon.connect()
 
-            dbAddPhones(current_user.userType,current_user.userid,alias,phones)
-        except Exception as e:
-            print e
-            flash(errorMsj)
+        cursor = con.cursor(as_dict=True)
+        cursor.callproc('sp_modificarProducto',(id,nombre,marca,descripcion,cantidad,costo,precioFinal,descuentoMaximo,blobFile,))
 
-    return render_template('modifyProduct.html', productToEdit=product)
+        return url_for('index')
+
+
+    return render_template('modifyProduct.html',product=DBproduct)
 
 
 #@app.route('/product/<int:product_id>.jpg')
@@ -108,11 +125,14 @@ def img(bkey):
     response.headers['Content-Type'] = blob_info.content_type
     return response
 
-#Listing stuff
-@app.route("/showListings")
-@login_required
-def showListings():
-    return render_template('showListings.html')
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+def allowed_file(filename):
+  return '.' in filename and \
+    filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+
 
 #get user's id
 @loginManager.user_loader
