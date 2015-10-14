@@ -7,7 +7,7 @@ class SQLConnection:
     """Connecto to Microsoft SQL DB """
     def __init__(self, userType=None, userName=None):
         self.server = "localhost"
-        self.user = "consulta"
+        self.user = "adminSupermercado"
         self.password = "12345678"
         #if userType == "admin":
         #    self.user = userName

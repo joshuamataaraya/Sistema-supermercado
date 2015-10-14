@@ -10,6 +10,7 @@ from user import User
 from db import *
 from sql import SQLConnection
 import base64
+import binascii
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3nan --~XHH!jmN]LWX/,?RT'
@@ -90,8 +91,9 @@ def modifyProduct(id):
     if request.method == 'POST':
         upload_file = request.files["file"]
         image_data = upload_file.read()
-        if file and allowed_file(upload_file.filename):
-            blobFile=db.Blob(image_data)
+        image_data=[elem.encode("hex") for elem in image_data]
+        #if file and allowed_file(upload_file.filename):
+        #    blobFile=db.Blob(image_data)
 
         nombre=request.form['Nombre'].encode("UTF-8")
         marca=request.form['Marca'].encode("UTF-8")
@@ -105,9 +107,9 @@ def modifyProduct(id):
         con = sqlCon.connect()
 
         cursor = con.cursor(as_dict=True)
-        cursor.callproc('sp_modificarProducto',(id,nombre,marca,descripcion,cantidad,costo,precioFinal,descuentoMaximo,blobFile,))
-
-        return url_for('index')
+        cursor.callproc('sp_modificarProducto',(id,nombre,marca,descripcion,cantidad,costo,precioFinal,descuentoMaximo,image_data,))
+        sqlCon.close(con)
+        return render_template('modifyProduct.html',product=DBproduct)
 
 
     return render_template('modifyProduct.html',product=DBproduct)
