@@ -3,8 +3,13 @@ import pymssql
 from flask import flash
 
 
-def checkLogin(user,password):
-    return True
+def checkLogin(user):
+    try:
+        sqlCon = SQLConnection(user.userType, user.userid)
+        con = sqlCon.connect()
+        return True
+    except:
+        return False
 
 def checkError(cursor,MSJ):
     for row in cursor:

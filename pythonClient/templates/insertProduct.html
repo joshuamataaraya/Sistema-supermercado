@@ -1,0 +1,49 @@
+<!DOCTYPE html> {% extends "layout.html" %} {% block content %}
+<form class="form-horizontal" method="POST" role="form" autocomplete="off" enctype="multipart/form-data">
+
+  <h2>Insert a Product</h2>
+  <br>
+
+  Actualice la imagen: <input type="file" name="file">
+
+  <div class="form-group">
+    <label for="usr">Nombre</label>
+    <input type="text" class="form-control" name="Nombre">
+  </div>
+
+
+  <div class="form-group">
+    <label for="usr">Marca</label>
+    <input type="text" class="form-control" name="Marca">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Descripcion</label>
+    <input type="text" class="form-control" name="Descripcion">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Cantidad</label>
+    <input type="text" class="form-control" name="Cantidad">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Costo</label>
+    <input type="text" class="form-control" name="Costo">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Precio Final</label>
+    <input type="text" class="form-control" name="PrecioFinal">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">Descuento Maximo</label>
+    <input type="text" class="form-control" name="DescuentoMaximo">
+  </div>
+
+  <br>
+  <button class="btn btn-lg btn-primary" type="submit">Insert Product</button>
+
+</form>
+{% endblock %}
