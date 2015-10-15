@@ -19,15 +19,12 @@ errorMsj="An unexpected Error ocurred, please try again!"
 loginManager = LoginManager()
 
 @app.route("/", methods=['GET', 'POST'])
-@login_required
 def index():
-
-    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    sqlCon = SQLConnection("consulta", None,None)
     con = sqlCon.connect()
 
     cursor = con.cursor(as_dict=True)
     cursor.callproc('sp_consultarProductos')
-
     DBproducts = []
 
     for product in cursor:
@@ -57,7 +54,7 @@ def login():
 
         user = User(alias, 'admin', password)
 
-        if checkLogin(alias, password):    #if valid user
+        if checkLogin(user):    #if valid user
             login_user(user) #login the user
             #show login msg
             flash('You are now logged in!')
@@ -140,6 +137,7 @@ def modifyProduct(id):
         return render_template('modifyProduct.html',product=DBproduct)
     return render_template('modifyProduct.html',product=DBproduct)
 
+
 @app.route("/verRecetas/<int:id>", methods=['GET', 'POST'])
 def verRecetas(id):
     sqlCon = SQLConnection(current_user.userType, current_user.userid)
@@ -187,6 +185,43 @@ def editarRecetas(id):
 
     print(DBReceta)
     return render_template('editarReceta.html',receta=DBReceta)
+
+@app.route("/insertProduct", methods=['GET','POST'])
+@login_required
+def insertProduct():
+    if request.method == 'POST':
+        upload_file = request.files["file"]
+        image_data = upload_file.read()
+        print(image_data.encode('hex_codec'))
+        nombre=request.form['Nombre'].encode("UTF-8")
+        marca=request.form['Marca'].encode("UTF-8")
+        descripcion=request.form['Descripcion'].encode("UTF-8")
+        cantidad=request.form['Cantidad'].encode("UTF-8")
+        costo=request.form['Costo'].encode("UTF-8")
+        precioFinal=request.form['PrecioFinal'].encode("UTF-8")
+        descuentoMaximo=request.form['DescuentoMaximo'].encode("UTF-8")
+
+        if image_data == "":
+            flash("Por favor seleccione una imagen")
+        else:
+            ex=("EXEC sp_insertarProducto "+
+						" @pNombre = '"+nombre+
+						"', @pMarca = '"+marca+
+						"', @pDescripcion = '"+descripcion+
+						"', @pCantidad = "+cantidad+
+						", @pCosto = """+costo+
+						", @pPrecioFinal = "+precioFinal+
+						", @pDescuentoMaximo = "+descuentoMaximo+
+						", @pFoto = '"+image_data.encode('hex_codec')+"'")
+        sqlCon = SQLConnection(current_user.userType, current_user.userid)
+        con = sqlCon.connect()
+        cursor = con.cursor(as_dict=True)
+        cursor.execute(ex)
+        con.commit()
+        sqlCon.close(con)
+        return index()
+    return render_template('insertProduct.html')
+
 @app.route("/img/<bkey>")
 def img(bkey):
     blob_info = get_photo(current_user.userType,bkey)
