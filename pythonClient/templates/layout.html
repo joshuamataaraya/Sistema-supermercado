@@ -32,7 +32,7 @@
           <a class="navbar-brand" href="/">Sistema Supermercado</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          {% if current_user.is_authenticated() %}
+          {% if current_user.is_authenticated %}
 
           <ul class="nav navbar-nav navbar-right">
             <li><a href="{{ url_for('logout') }}">Logout</a></li>

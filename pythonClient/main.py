@@ -82,8 +82,6 @@ def modifyProduct(id):
     cursor = con.cursor(as_dict=True)
     cursor.callproc('sp_obtenerProducto',(id,))
 
-
-
     for product in cursor:
         product['Foto'] = base64.b64encode(product['Foto'])
         DBproduct = product
@@ -91,10 +89,6 @@ def modifyProduct(id):
     if request.method == 'POST':
         upload_file = request.files["file"]
         image_data = upload_file.read()
-        image_data=[elem.encode("hex") for elem in image_data]
-        #if file and allowed_file(upload_file.filename):
-        #    blobFile=db.Blob(image_data)
-
         nombre=request.form['Nombre'].encode("UTF-8")
         marca=request.form['Marca'].encode("UTF-8")
         descripcion=request.form['Descripcion'].encode("UTF-8")
@@ -103,22 +97,42 @@ def modifyProduct(id):
         precioFinal=request.form['PrecioFinal'].encode("UTF-8")
         descuentoMaximo=request.form['DescuentoMaximo'].encode("UTF-8")
 
+        if image_data == "":
+            ex=("EXEC sp_modificarProducto "+
+						"@pIdProducto = "+id+
+						", @pNombre = '"+nombre+
+						"', @pMarca = '"+marca+
+						"', @pDescripcion = '"+descripcion+
+						"', @pCantidad = "+cantidad+
+						", @pCosto = """+costo+
+						", @pPrecioFinal = "+precioFinal+
+						", @pDescuentoMaximo = "+descuentoMaximo)
+        else:
+            ex=("EXEC sp_modificarProducto "+
+						"@pIdProducto = "+id+
+						", @pNombre = '"+nombre+
+						"', @pMarca = '"+marca+
+						"', @pDescripcion = '"+descripcion+
+						"', @pCantidad = "+cantidad+
+						", @pCosto = """+costo+
+						", @pPrecioFinal = "+precioFinal+
+						", @pDescuentoMaximo = "+descuentoMaximo+
+						", @pFoto = '"+image_data.encode('hex_codec')+"'")
         sqlCon = SQLConnection(current_user.userType, current_user.userid)
         con = sqlCon.connect()
-
-        cursor = con.cursor(as_dict=True)
-        cursor.callproc('sp_modificarProducto',(id,nombre,marca,descripcion,cantidad,costo,precioFinal,descuentoMaximo,image_data,))
+        cursor = con.cursor(as_dict=True)       
+        cursor.execute(ex)
+        con.commit()
         sqlCon.close(con)
+        sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    	con = sqlCon.connect()
+    	cursor = con.cursor(as_dict=True)
+    	cursor.callproc('sp_obtenerProducto',(id,))
+    	for product in cursor:
+        	product['Foto'] = base64.b64encode(product['Foto'])
+        	DBproduct = product
         return render_template('modifyProduct.html',product=DBproduct)
-
-
     return render_template('modifyProduct.html',product=DBproduct)
-
-
-#@app.route('/product/<int:product_id>.jpg')
-#def product(product_id):
-#     jpeg_byte_string = get_photo(current_user.userType,product_id)
-#     return current_app.response_class(jpeg_byte_string,mimetype=mimetype,direct_passthrough=False)
 
 @app.route("/img/<bkey>")
 def img(bkey):
