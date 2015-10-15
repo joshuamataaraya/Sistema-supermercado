@@ -140,7 +140,7 @@ def modifyProduct(id):
 
 @app.route("/verRecetas/<int:id>", methods=['GET', 'POST'])
 def verRecetas(id):
-    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    sqlCon = SQLConnection('consulta', None)
     con = sqlCon.connect()
 
     cursor = con.cursor(as_dict=True)
