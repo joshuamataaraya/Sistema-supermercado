@@ -34,12 +34,30 @@
           <td>{{ product['PrecioFinal'] }}</td>
           <td>{{ product['DescuentoMaximo'] }}</td>
 
-            <form method="POST" class="form-inline">
-            <input hidden value="{{ product['Id'] }}" name="idProduct">
-            <td><button class="btn" type="submit">
-              Editar
-            </button></td>
-            </form>
+          <form method="POST" class="form-inline">
+          <input hidden value="{{ product['Id'] }}" name="idProduct">
+          <input hidden value="1" name="opcion">
+
+          <td><button class="btn" type="submit">
+            Ver Recetas
+          </button></td>
+          </form>
+
+          <form method="POST" class="form-inline">
+          <input hidden value="{{ product['Id'] }}" name="idProduct">
+          <input hidden value="2" name="opcion">
+          <td><button class="btn" type="submit">
+            Editar Recetas
+          </button></td>
+          </form>
+
+          <form method="POST" class="form-inline">
+          <input hidden value="{{ product['Id'] }}" name="idProduct">
+          <input hidden value="3" name="opcion">
+          <td><button class="btn" type="submit">
+            Editar Producto
+          </button></td>
+          </form>
 
         </tr>
       {% endfor %}

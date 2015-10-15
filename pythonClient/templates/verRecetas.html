@@ -1,0 +1,42 @@
+<!DOCTYPE html> {% extends "layout.html" %} {% block content %}
+<br>
+
+<form class="form-horizontal" role="form" autocomplete="off" method="post">
+
+  <h2>Recetas</h2>
+  <br>
+  <br>
+
+  <br><br>
+  <div class="container">
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descripcion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for receta in recetas %}
+        <tr>
+          <td>{{ (receta['NombreReceta']) }}</td>
+          <td>{{ receta['Descripcion'] }}</td>
+
+          <form method="POST" class="form-inline">
+          <input hidden value="{{ receta['IdReceta'] }}" name="idReceta">
+          <td><button class="btn" type="submit">
+            Editar Receta
+          </button></td>
+          </form>
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+
+
+</form>
+{% endblock %}

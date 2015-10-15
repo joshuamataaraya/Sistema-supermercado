@@ -37,7 +37,13 @@ def index():
     if request.method == 'POST':
         try:
             productId = request.values.get('idProduct')
-            return redirect(url_for('modifyProduct',id=productId))
+            opcion=request.values.get('opcion')
+            if (opcion == "1"):
+                return redirect(url_for('verRecetas',id=productId))
+            elif (opcion ==2):
+                return redirect(url_for('editarRecetas',id=productId))
+            else:
+                return redirect(url_for('modifyProduct',id=productId))
         except Exception as e:
             return render_template('index.html', products=DBproducts)
     return render_template('index.html', products=DBproducts)
@@ -120,7 +126,7 @@ def modifyProduct(id):
 						", @pFoto = '"+image_data.encode('hex_codec')+"'")
         sqlCon = SQLConnection(current_user.userType, current_user.userid)
         con = sqlCon.connect()
-        cursor = con.cursor(as_dict=True)       
+        cursor = con.cursor(as_dict=True)
         cursor.execute(ex)
         con.commit()
         sqlCon.close(con)
@@ -134,6 +140,53 @@ def modifyProduct(id):
         return render_template('modifyProduct.html',product=DBproduct)
     return render_template('modifyProduct.html',product=DBproduct)
 
+@app.route("/verRecetas/<int:id>", methods=['GET', 'POST'])
+def verRecetas(id):
+    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    con = sqlCon.connect()
+
+    cursor = con.cursor(as_dict=True)
+    cursor.callproc('sp_consultarRecetas',(id,))
+
+    DBRecetas = []
+
+    for receta in cursor:
+        DBRecetas.append(receta)
+
+    if request.method == 'POST':
+        try:
+            recetaId = request.values.get('idReceta')
+
+            return redirect(url_for('editarRecetas',id=recetaId))
+        except Exception as e:
+            return render_template('index.html', products=DBproducts)
+
+    return render_template('verRecetas.html',recetas=DBRecetas)
+@app.route("/editarRecetas/<id>", methods=['GET', 'POST'])
+@login_required
+def editarRecetas(id):
+    if request.method == 'POST':
+        nombre=request.form['Nombre'].encode("UTF-8")
+        descripcion=request.form['Descripcion'].encode("UTF-8")
+
+        sqlCon = SQLConnection(current_user.userType, current_user.userid)
+        con = sqlCon.connect()
+        cursor = con.cursor(as_dict=True)
+        cursor.callproc('sp_modificarReceta',(id,nombre,descripcion))
+        con.commit()
+
+    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    con = sqlCon.connect()
+
+    cursor = con.cursor(as_dict=True)
+    cursor.callproc('sp_obtenerReceta',(id,))
+
+
+    for receta in cursor:
+        DBReceta = receta
+
+    print(DBReceta)
+    return render_template('editarReceta.html',receta=DBReceta)
 @app.route("/img/<bkey>")
 def img(bkey):
     blob_info = get_photo(current_user.userType,bkey)
