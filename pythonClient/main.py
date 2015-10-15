@@ -19,15 +19,12 @@ errorMsj="An unexpected Error ocurred, please try again!"
 loginManager = LoginManager()
 
 @app.route("/", methods=['GET', 'POST'])
-@login_required
 def index():
-
-    sqlCon = SQLConnection(current_user.userType, current_user.userid)
+    sqlCon = SQLConnection("consulta", None,None)
     con = sqlCon.connect()
 
     cursor = con.cursor(as_dict=True)
     cursor.callproc('sp_consultarProductos')
-
     DBproducts = []
 
     for product in cursor:
@@ -51,7 +48,7 @@ def login():
 
         user = User(alias, 'admin', password)
 
-        if checkLogin(alias, password):    #if valid user
+        if checkLogin(user):    #if valid user
             login_user(user) #login the user
             #show login msg
             flash('You are now logged in!')
