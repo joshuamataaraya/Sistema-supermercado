@@ -1,0 +1,28 @@
+<!DOCTYPE html> {% extends "layout.html" %} {% block content %}
+<form class="form-horizontal" method="POST" role="form" autocomplete="off" enctype="multipart/form-data">
+
+  <br>
+  <h2>Insertar Receta</h2>
+  <br>
+
+  <div class="form-group">
+    <label for="usr">Nombre</label>
+    <input type="text" class="form-control" name="Nombre">
+  </div>
+
+
+  <div class="form-group">
+    <label for="usr">Descripcion</label>
+    <input type="text" class="form-control" name="Descripcion">
+  </div>
+
+  <div class="form-group">
+    <label for="usr">NombreProducto</label>
+    <input type="text" class="form-control" name="NombreProducto">
+  </div>
+
+  <br>
+  <button class="btn btn-lg btn-primary" type="submit">Insert Product</button>
+
+</form>
+{% endblock %}

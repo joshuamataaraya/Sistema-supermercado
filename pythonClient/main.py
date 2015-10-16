@@ -172,6 +172,7 @@ def editarRecetas(id):
         cursor = con.cursor(as_dict=True)
         cursor.callproc('sp_modificarReceta',(id,nombre,descripcion))
         con.commit()
+        sqlCon.close(con)
 
     sqlCon = SQLConnection(current_user.userType, current_user.userid)
     con = sqlCon.connect()
@@ -183,7 +184,9 @@ def editarRecetas(id):
     for receta in cursor:
         DBReceta = receta
 
+    sqlCon.close(con)
     print(DBReceta)
+
     return render_template('editarReceta.html',receta=DBReceta)
 
 @app.route("/insertProduct", methods=['GET','POST'])
@@ -221,6 +224,27 @@ def insertProduct():
         sqlCon.close(con)
         return index()
     return render_template('insertProduct.html')
+
+@app.route("/insertarReceta", methods=['GET','POST'])
+@login_required
+def insertarReceta():
+    if request.method == 'POST':
+        nombre=request.form['Nombre'].encode("UTF-8")
+        descripcion=request.form['Descripcion'].encode("UTF-8")
+        nombreProducto=request.form['NombreProducto'].encode("UTF-8")
+
+        ex=("EXEC sp_insertarReceta "+
+            " @pNombre = '"+nombre+
+			"', @pNombreProducto = '"+nombreProducto+
+			"', @pDescripcion = '"+descripcion+"'")
+        sqlCon = SQLConnection(current_user.userType, current_user.userid)
+        con = sqlCon.connect()
+        cursor = con.cursor(as_dict=True)
+        cursor.execute(ex)
+        con.commit()
+        sqlCon.close(con)
+        return index()
+    return render_template('insertarReceta.html')
 
 @app.route("/img/<bkey>")
 def img(bkey):
