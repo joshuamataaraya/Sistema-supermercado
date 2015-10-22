@@ -185,7 +185,6 @@ def editarRecetas(id):
         DBReceta = receta
 
     sqlCon.close(con)
-    print(DBReceta)
 
     return render_template('editarReceta.html',receta=DBReceta)
 
@@ -195,7 +194,6 @@ def insertProduct():
     if request.method == 'POST':
         upload_file = request.files["file"]
         image_data = upload_file.read()
-        print(image_data.encode('hex_codec'))
         nombre=request.form['Nombre'].encode("UTF-8")
         marca=request.form['Marca'].encode("UTF-8")
         descripcion=request.form['Descripcion'].encode("UTF-8")
